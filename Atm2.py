@@ -1,109 +1,73 @@
 class Account:
-    def __init__(self,account_number,name,balance==0.0):
-        self.account_number=account_number
-        self.name=name
-        self.balance=balance
+    def __init__(self, account_number, holder_name, balance=0):
+        self.__account_number = account_number   
+        self.__holder_name = holder_name         
+        self.__balance = balance                 
     
-    def deposit(self,amount):
-        if amount>0:
-            self.balance+=amount
-            print("{amount} deposited successfully.")
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+            print(f"Deposited ₹{amount}. New balance: ₹{self.__balance}")
         else:
-            print("Deposite must be postive.")
+            print("Invalid deposit amount.")
     
-    def Withdraw(self,amount):
-        if amount>self.balance:
-            print("Insufficnet balance.")
-        elif amount<=0:
-            print("WIthdrawal amount must be  postive.")
+    def withdraw(self, amount):
+        if 0 < amount <= self.__balance:
+            self.__balance -= amount
+            print(f"Withdrawn ₹{amount}. Remaining balance: ₹{self.__balance}")
         else:
-            self.balance-=amount
-            print("{amount} withdrwan sucessfully")  
-
+            print("Insufficient balance or invalid amount.")
+    
     def get_balance(self):
-        return self.balance
-
-    def display(self):
-        print("AccountNumber:{self.account_number}")   
-        print("AccountHolder: {self.name}")  
-        print("Balance {self.balance}")
-
-class BANK:
-    def __init__(self):
-        self.accounts={}
+        return self.__balance
     
-    def create_account(self,account_number,name,intial_deposit=0.0):
-        if account_number in self.accounts:
-            print("Acoount Number all Ready exist")
+    def show_details(self):
+        print(f"Account No: {self.__account_number}, Holder: {self.__holder_name}, Balance: ₹{self.__balance}")
+
+class ATM(Account):
+    def __init__(self, account_number, holder_name, balance=0, pin="0000"):
+        super().__init__(account_number, holder_name, balance)  
+        self.__pin = pin
+    
+    def validate_pin(self, entered_pin):
+        return entered_pin == self.__pin
+    
+    def show_details(self):
+        print(f"ATM Account [{self.get_account_number()}] - Holder: {self.get_holder_name()} - Balance: ₹{self.get_balance()}")
+    
+    def get_account_number(self):
+        return self._Account__account_number
+    def get_holder_name(self):
+        return self._Account__holder_name
+    def get_balance(self):
+        return self._Account__balance
+
+atm_user = ATM("123456789", "Alice", 5000, "1234")
+print("=== Welcome to the ATM ===")
+pin = input("Enter your PIN: ")
+if atm_user.validate_pin(pin):
+    while True:
+        print("\nMenu:")
+        print("1. Check Balance")
+        print("2. Deposit Money")
+        print("3. Withdraw Money")
+        print("4. Show Account Details")
+        print("5. Exit")
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            print(f"Your balance is: ₹{atm_user.get_balance()}")
+        elif choice == "2":
+            amount = float(input("Enter amount to deposit: "))
+            atm_user.deposit(amount)
+        elif choice == "3":
+            amount = float(input("Enter amount to withdraw: "))
+            atm_user.withdraw(amount)
+        elif choice == "4":
+            atm_user.show_details()
+        elif choice == "5":
+            print("Thank you for using the ATM!")
+            break
         else:
-            account=Account(account_number,name,intial_deposit)
-            self.accounts[account_number]=account
-            print("account created successfully")
-    
-    def get_account(self,account_number):
-        account=self.accounts.get(account_number)
-        if account:
-            return account
-        else:
-            print("Account not found")
-            return None
-    
-    def display_all_accounts(self):
-        if not self.accounts:
-            print("NO acccounts in Bank.")
-        else:
-            for account in self.accounts.values():
-                account.display()
-                print("_"*20)
-
-    def main():
-        bank=BANK()
-        while True:
-            print("\n---Welcome to SBI bank---")
-            print("1.Create account")
-            print("2.Deposit MOney")
-            print("3.Withdraw Money")
-            print("4.Check Balance")
-            print("5.Display All Accounts")
-            print("6.EXist")
-
-choice=input("Enter your choice")
-if choice=='1':
-    account_number=input("Entrer account number:")
-    name=input("Enter holder name:")
-    intial_deposit=float(input("Enter initail deposit(deafult 0):"))
-    bank.create_account(account_number,name,intial_deposit)
-
-elif choice=='2':
-    account_number=input("Enter account number:")
-    account=bank.get_account(account_number)
-    if account:
-        amount=float(input("Enter deposit amount:"))
-        account.deposit(amount)
-    
-    elif choice=='3':
-        account_number=input("Enter account number:")
-        account=bank.get_account(account_number)
-        if account:
-            amount=float(input("Enter the withdrawal amount:"))
-            account.withdraw(amount)
-        
-        elif choice=='4':
-            account_number=input("Enter account number:")
-            account=bank.get_account(account_number)
-            if account:
-                print("Account Balance:{account.get_balance()}")
-
-            elif choice=='5':
-                bank.display_all_account()
-            
-            elif choice=='6':
-                print("Thank you for using SBI Bank!")
-                break
-
-            else:
-                print("Invalid choice please try again.")
-
-    
-
-
+            print("Invalid choice. Please try again.")
+else:
+    print("Incorrect PIN! Access denied.")
